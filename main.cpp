@@ -3,33 +3,29 @@
 #include <memory>
 #include <math.h>
 
+class shape_interface {
+public:
+    virtual ~shape_interface() = default;
+    virtual void input_data() = 0;
+    [[nodiscard]] virtual double area() const = 0;
+};
+
 class virtual_base {
 public:
-    template<typename T>
-    virtual_base(T &obj) : m_obj(std::make_shared<impl<T>>(obj)) {}
+    template<typename T> explicit virtual_base(T &obj) : m_obj(std::make_shared<shape_impl<T>>(obj)) {}
 
-    void input_data() {
-        m_obj->input_data();
-    }
-
-    [[nodiscard]] double area() const {
-        return m_obj->area();
+    std::shared_ptr<shape_interface> get() {
+        return m_obj;
     }
 
 private:
-    class interface {
-    public:
-        virtual ~interface() = default;
-        virtual void input_data() = 0;
-        [[nodiscard]] virtual double area() const = 0;
-    };
 
     template<typename T>
-    class impl : public interface {
+    class shape_impl : public shape_interface {
         T& m_impl_obj;
 
     public:
-        explicit impl(T& impl_obj) : m_impl_obj(impl_obj) {}
+        explicit shape_impl(T& impl_obj) : m_impl_obj(impl_obj) {}
 
         void input_data() override {
             m_impl_obj.input_data();
@@ -40,7 +36,7 @@ private:
         }
     };
 
-    std::shared_ptr<interface> m_obj;
+    std::shared_ptr<shape_interface> m_obj;
 };
 
 class shape_property {};
@@ -49,15 +45,12 @@ template <typename T>
 concept ShapeProperty = std::is_base_of_v<shape_property, T>;
 
 template <ShapeProperty ...Properties>
-class shape : virtual public Properties... {
+class shape : shape_interface, virtual public Properties... {
 public:
     explicit shape(std::string name) : name(std::move(name)) {}
     virtual ~shape() = default;
 
     [[nodiscard]] std::string get_name() const { return name; }
-
-    virtual void input_data() = 0;
-    [[nodiscard]] virtual double area() const = 0;
 
 protected:
     std::string name;
@@ -152,11 +145,11 @@ int main() {
     shapes.emplace_back(c);
 
     for (auto &shape : shapes) {
-        shape.input_data();
-        std::cout << shape.area() << std::endl;
+        shape.get()->input_data();
+        std::cout << shape.get()->area() << std::endl;
     }
 
     r.set_width(10);
-    std::cout << shapes[0].area() << std::endl;
+    std::cout << shapes[0].get()->area() << std::endl;
     return 0;
 }
