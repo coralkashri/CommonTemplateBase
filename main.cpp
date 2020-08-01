@@ -10,23 +10,25 @@ public:
     [[nodiscard]] virtual double area() const = 0;
 };
 
+template <typename Interface>
 class virtual_base {
 public:
-    template<typename T> explicit virtual_base(T &obj) : m_obj(std::make_shared<shape_impl<T>>(obj)) {}
+    template<typename T> explicit virtual_base(T &obj) : m_obj(std::make_shared<interface_implementation<T>>(obj)) {}
 
-    std::shared_ptr<shape_interface> get() {
-        return m_obj;
+    std::shared_ptr<Interface> get() {
+        return m_obj; // Get a pointer to the interface implementation
     }
 
 private:
-
     template<typename T>
-    class shape_impl : public shape_interface {
-        T& m_impl_obj;
+    class interface_implementation : public Interface {
+        T& m_impl_obj; // Contain the target specialized class instance
 
     public:
-        explicit shape_impl(T& impl_obj) : m_impl_obj(impl_obj) {}
+        explicit interface_implementation(T& impl_obj) : m_impl_obj(impl_obj) {}
 
+        // Interface should be fully implemented here
+        // region [Interface Implementation Begin]
         void input_data() override {
             m_impl_obj.input_data();
         }
@@ -34,9 +36,10 @@ private:
         [[nodiscard]] double area() const override {
             return m_impl_obj.area();
         }
+        // endregion [Interface Implementation End]
     };
 
-    std::shared_ptr<shape_interface> m_obj;
+    std::shared_ptr<Interface> m_obj;
 };
 
 class shape_property {};
@@ -45,7 +48,7 @@ template <typename T>
 concept ShapeProperty = std::is_base_of_v<shape_property, T>;
 
 template <ShapeProperty ...Properties>
-class shape : shape_interface, virtual public Properties... {
+class shape : public shape_interface, virtual public Properties... { // Must inherit from the same interface of the collection
 public:
     explicit shape(std::string name) : name(std::move(name)) {}
     virtual ~shape() = default;
@@ -134,7 +137,7 @@ public:
 };
 
 int main() {
-    std::vector<virtual_base> shapes;
+    std::vector<virtual_base<shape_interface>> shapes;
 
     rectangle r;
     triangle t;
