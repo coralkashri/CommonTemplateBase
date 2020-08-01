@@ -15,9 +15,8 @@ class virtual_base {
 public:
     template<typename T> explicit virtual_base(T &obj) : m_obj(std::make_shared<interface_implementation<T>>(obj)) {}
 
-    std::shared_ptr<Interface> get() {
-        return m_obj; // Get a pointer to the interface implementation
-    }
+    // Get a pointer to the interface implementation
+    std::shared_ptr<Interface> get() { return m_obj; }
 
 private:
     template<typename T>
@@ -29,13 +28,9 @@ private:
 
         // Interface should be fully implemented here
         // region [Interface Implementation Begin]
-        void input_data() override {
-            m_impl_obj.input_data();
-        }
+        void input_data() override { return m_impl_obj.input_data(); }
 
-        [[nodiscard]] double area() const override {
-            return m_impl_obj.area();
-        }
+        [[nodiscard]] double area() const override { return m_impl_obj.area(); }
         // endregion [Interface Implementation End]
     };
 
