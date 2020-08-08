@@ -11,7 +11,10 @@ public:
     [[nodiscard]] virtual double area() const = 0;
 };
 
-class shape_property {};
+class shape_property {
+public:
+    virtual void input_data() = 0;
+};
 
 template <typename T>
 concept ShapeProperty = std::is_base_of_v<shape_property, T>;
@@ -21,6 +24,10 @@ class shape : public shape_interface, virtual public Properties... { // Must inh
 public:
     explicit shape(std::string name) : name(std::move(name)) {}
     virtual ~shape() = default;
+
+    virtual void input_data() {
+        (Properties::input_data(), ...);
+    };
 
     [[nodiscard]] std::string get_name() const { return name; }
 
@@ -33,6 +40,11 @@ public:
     [[nodiscard]] double get_width() const { return width; }
     void set_width(double width) { this->width = width; }
 
+    void input_data() override {
+        std::cout << "Enter width:" << std::endl;
+        std::cin >> width;
+    };
+
 protected:
     double width;
 };
@@ -41,6 +53,11 @@ class height_shape_property : shape_property {
 public:
     [[nodiscard]] double get_height() const { return height; }
     void set_height(double height) { this->height = height; }
+
+    void input_data() override {
+        std::cout << "Enter height:" << std::endl;
+        std::cin >> height;
+    };
 
 protected:
     double height;
@@ -51,6 +68,11 @@ public:
     [[nodiscard]] double get_radios() const { return radios; }
     void set_radios(double radios) { this->radios = radios; }
 
+    void input_data() override {
+        std::cout << "Enter radios:" << std::endl;
+        std::cin >> radios;
+    };
+
 protected:
     double radios;
 };
@@ -60,11 +82,8 @@ public:
     rectangle() : shape("Rectangle") {}
 
     void input_data() override {
-        double width, height;
-        std::cout << "Enter width & height:" << std::endl;
-        std::cin >> width >> height;
-        set_width(width);
-        set_height(height);
+        std::cout << "Input Rectangle:" << std::endl;
+        shape::input_data();
     }
 
     [[nodiscard]] double area() const override {
@@ -77,11 +96,8 @@ public:
     triangle() : shape("Triangle") {}
 
     void input_data() override {
-        double width, height;
-        std::cout << "Enter width & height:" << std::endl;
-        std::cin >> width >> height;
-        set_width(width);
-        set_height(height);
+        std::cout << "Input Triangle:" << std::endl;
+        shape::input_data();
     }
 
     [[nodiscard]] double area() const override {
@@ -94,10 +110,8 @@ public:
     circle() : shape("Circle") {}
 
     void input_data() override {
-        double radios;
-        std::cout << "Enter radios:" << std::endl;
-        std::cin >> radios;
-        set_radios(radios);
+        std::cout << "Input Circle:" << std::endl;
+        shape::input_data();
     }
 
     [[nodiscard]] double area() const override {
