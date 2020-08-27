@@ -12,13 +12,14 @@
 template <typename Interface>
 class template_base_container {
 public:
-    template<typename T> explicit template_base_container(T &obj) : m_obj(std::make_shared<interface_implementation<T>>(obj)) {}
+    template <typename T>
+    explicit template_base_container(T &obj) : m_obj(std::make_shared<interface_implementation<T>>(obj)) {}
 
     // Get a pointer to the interface implementation
     std::shared_ptr<Interface> get() { return m_obj; }
 
 private:
-    template<typename T>
+    template <typename T>
     class interface_implementation : public Interface {
         T& m_impl_obj; // Contain the target specialized class instance
 
