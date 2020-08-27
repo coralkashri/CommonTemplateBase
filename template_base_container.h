@@ -1,3 +1,9 @@
+/**
+ * This model created with inspiration of Sean Parent:
+ * Inheritance Is The Base Class of Evil
+ * https://channel9.msdn.com/Events/GoingNative/2013/Inheritance-Is-The-Base-Class-of-Evil
+ */
+
 #ifndef COMMON_TEMPLATE_BASE_TEMPLATE_BASE_CONTAINER_H
 #define COMMON_TEMPLATE_BASE_TEMPLATE_BASE_CONTAINER_H
 
