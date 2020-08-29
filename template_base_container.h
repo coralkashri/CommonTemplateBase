@@ -16,7 +16,7 @@ class template_base_container {
 public:
     template <typename T>
     explicit template_base_container(T &obj) : m_obj(std::make_shared<interface_implementation<Interface, T>>(obj)) {
-        static_assert(std::is_base_of_v<Interface, interface_implementation<Interface, T>>, "In template_base_container Impl param should inherit from Interface template param.");
+        static_assert(std::is_base_of_v<Interface, interface_implementation<Interface, T>>, "In template_base_container interface_implementation<Interface, T> should inherit from Interface template param.");
     }
 
     // Get a pointer to the interface implementation
