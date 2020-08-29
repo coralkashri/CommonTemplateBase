@@ -3,12 +3,29 @@
 
 #include <iostream>
 #include <math.h>
+#include "template_base_interface_impl.h"
 
 class shape_interface {
 public:
     virtual ~shape_interface() = default;
     virtual void input_data() = 0;
     [[nodiscard]] virtual double area() const = 0;
+};
+
+// Interface implementation specialization for shape_interface
+template <typename T>
+class interface_implementation<shape_interface, T> : public shape_interface {
+public:
+    explicit interface_implementation(T& impl_obj) : m_impl_obj(impl_obj) {}
+
+    // Interface should be fully implemented here
+    // region [Interface Implementation Begin]
+    void input_data() override { return m_impl_obj.input_data(); };
+    [[nodiscard]] double area() const override { return m_impl_obj.area(); };
+    // endregion [Interface Implementation End]
+
+private:
+    T& m_impl_obj; // Contain the target specialized class instance
 };
 
 class shape_property {
@@ -25,9 +42,9 @@ public:
     explicit shape(std::string name) : name(std::move(name)) {}
     virtual ~shape() = default;
 
-    virtual void input_data() {
+    void input_data() override {
         (Properties::input_data(), ...);
-    };
+    }
 
     [[nodiscard]] std::string get_name() const { return name; }
 
@@ -82,7 +99,7 @@ public:
     rectangle() : shape("Rectangle") {}
 
     void input_data() override {
-        std::cout << "Input Rectangle:" << std::endl;
+        std::cout << "Input " << name << ":" << std::endl;
         shape::input_data();
     }
 
@@ -96,7 +113,7 @@ public:
     triangle() : shape("Triangle") {}
 
     void input_data() override {
-        std::cout << "Input Triangle:" << std::endl;
+        std::cout << "Input " << name << ":" << std::endl;
         shape::input_data();
     }
 
@@ -110,12 +127,25 @@ public:
     circle() : shape("Circle") {}
 
     void input_data() override {
-        std::cout << "Input Circle:" << std::endl;
+        std::cout << "Input " << name << ":" << std::endl;
         shape::input_data();
     }
 
     [[nodiscard]] double area() const override {
         return M_PI * radios * radios;
+    }
+};
+
+class independent_legal_shape {
+public:
+    independent_legal_shape() = default;
+
+    void input_data() {
+        std::cout << "No input needed for independent_legal_shape." << std::endl;
+    }
+
+    [[nodiscard]] double area() const {
+        return 50;
     }
 };
 
